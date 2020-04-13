@@ -41,12 +41,15 @@ jobs:
 
   deploy-prod:
     docker:
-      - image: circleci/node:12.9.1-browsers
+      - image: cimg/python:3.6
     working_directory: ~/repo
     steps:
       - aws-s3/sync:
+          aws-access-key-id: AWS_ACCESS_KEY_ID_BLUE
+          aws-region: AWS_REGION_BLUE
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_BLUE
           from: bucket
-          to: 's3://react-lab-purposes'
+          to: s3://react-lab-purposes
           arguments: | # Optional arguments
             --acl public-read \
             --cache-control "max-age=86400"
