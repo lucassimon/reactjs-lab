@@ -41,7 +41,7 @@ jobs:
       - attach_workspace:
           at: ~/
       - aws-s3/sync:
-          from: project/build
+          from: ~/build
           to: 's3://react-lab-staging-purposes/'
           arguments: | # Optional arguments
             --acl public-read \
@@ -54,7 +54,7 @@ jobs:
       - attach_workspace:
           at: ~/
       - aws-s3/sync:
-          from: project/build
+          from: ~/build
           to: "s3://react-lab-purposes/"
           arguments: | # Optional arguments
             --acl public-read \
