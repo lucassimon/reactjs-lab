@@ -46,7 +46,7 @@ jobs:
     steps:
       - aws-s3/sync:
           from: bucket
-          to: "s3://react-lab-purposes"
+          to: "s3://react-lab-purposes/"
           arguments: | # Optional arguments
             --acl public-read \
             --cache-control "max-age=86400"
