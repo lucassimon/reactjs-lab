@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  aws-s3: circleci/aws-s3@1.0.11
+  aws-s3: circleci/aws-s3@1.0.15
   cypress: cypress-io/cypress@1
 
 jobs:
@@ -46,7 +46,7 @@ jobs:
     steps:
       - aws-s3/sync:
           from: bucket
-          to: 's3://react-lab-purposes/'
+          to: 's3://react-lab-purposes'
           arguments: | # Optional arguments
             --acl public-read \
             --cache-control "max-age=86400"
