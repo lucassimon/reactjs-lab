@@ -30,18 +30,18 @@ jobs:
       - run: npm build
 
       - persist_to_workspace:
-          root: ~/
+          root: workspace
           paths:
-            - project/build
+            - build
           
 
   deploy-stage:
     executor: python-executor
     steps:
       - attach_workspace:
-          at: ~/
+          at: /tmp/workspace
       - aws-s3/sync:
-          from: ~/build
+          from: /tmp/workspace/build
           to: 's3://react-lab-staging-purposes/'
           arguments: | # Optional arguments
             --acl public-read \
@@ -52,9 +52,9 @@ jobs:
     executor: python-executor
     steps:
       - attach_workspace:
-          at: ~/
+          at: /tmp/workspace
       - aws-s3/sync:
-          from: ~/build
+          from: /tmp/workspace/build
           to: "s3://react-lab-purposes/"
           arguments: | # Optional arguments
             --acl public-read \
@@ -72,7 +72,7 @@ workflows:
             - build
           filters:
             branches:
-              only: staging
+              only: master
       - deploy-prod:
           context: REACT_LAB
           requires:
