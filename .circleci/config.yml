@@ -22,8 +22,8 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+      - run: npm run size
       - run: npm run coverage
-      - run: yarn ci:cypress-run
       - run: npm build
 
   deploy-stage:

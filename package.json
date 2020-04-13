@@ -17,6 +17,7 @@
     "coverage": "react-scripts test --watchAll=false",
     "cypress:run": "cypress run --record --key=${CYPRESS_RECORD_KEY}",
     "ci:cypress-run": "start-server-and-test start http://localhost:3000 cypress:run",
+    "size": "react-scripts build && size-limit",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -35,7 +36,14 @@
     ]
   },
   "devDependencies": {
+    "@size-limit/preset-app": "^4.4.5",
     "cypress": "^4.4.0",
+    "size-limit": "^4.4.5",
     "start-server-and-test": "^1.10.11"
-  }
+  },
+  "size-limit": [
+    {
+      "path": "build/static/**/*.{js,css,svg,woff,woff2,png,ttf,html}"
+    }
+  ]
 }
