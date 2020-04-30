@@ -94,15 +94,6 @@ jobs:
           overwrite: true # default is false
 
 workflows:
-  feature-branch:
-    jobs:
-      - test:
-        filters:
-            branches:
-              ignore: 
-                - develop
-                - master
-
   build-deploy-dev:
     jobs:
       - test-and-build:
