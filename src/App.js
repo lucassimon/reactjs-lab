@@ -16,8 +16,9 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React 2.0
+          Learn React change develop
         </a>
+        <span>{process.env.REACT_APP_API_BASE_URL}</span>
       </header>
     </div>
   );
