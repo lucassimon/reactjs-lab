@@ -97,59 +97,54 @@ jobs:
 
 workflows:
   version: 2
-  build-deploy:
+  build-deploy-dev:
+    filters:
+      branches:
+        only: develop
     jobs:
       - test:
         filters:
             tags:
               only: /^v[0-9]+(\.[0-9]+)*$/
-              
+
       - build-dev:
           context: REACT_LAB
-          filters:
-            tags:
-              only: /^v[0-9]+(\.[0-9]+)*$/
-
-      - build-stage:
-          context: REACT_LAB_STAGE
-          filters:
-            tags:
-              only: /^v[0-9]+(\.[0-9]+)*$/
-
-      - build-prod:
-          context: REACT_LAB_PROD
+          requires:
+            - test
           filters:
             tags:
               only: /^v[0-9]+(\.[0-9]+)*$/
 
       - deploy-dev:
           context: REACT_LAB
-          requires:
-            - test
             - build-dev
           filters:
             branches:
               only: develop
 
-      - deploy-stage:
+  build-deploy-stage:
+    filters:
+      branches:
+        only: master
+    jobs:
+      - test:
+        filters:
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*$/
+
+      - build-stage:
           context: REACT_LAB_STAGE
-          type: approval
           requires:
             - test
+          filters:
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*$/
+
+      - deploy-stage:
+          context: REACT_LAB_STAGE
             - build-stage
           filters:
             branches:
               only: master
 
-      - deploy-prod:
-          context: REACT_LAB_PROD
-          type: approval
-          requires:
-            - test
-            - build-prod
-          filters:
-            branches:
-              ignore: /.*/
-            # only act on version tags
-            tags:
-              only: /^v[0-9]+(\.[0-9]+)*$/
+
