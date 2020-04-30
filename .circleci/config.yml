@@ -1,5 +1,3 @@
-version: 2.1
-
 orbs:
   aws-s3: circleci/aws-s3@1.0.15
 
@@ -10,6 +8,7 @@ executors:
   python-executor:
     docker:
       - image: circleci/python:3.7
+
 jobs:
   test-and-build:
     executor: node-executor 
@@ -76,33 +75,27 @@ jobs:
 
 workflows:
   build-deploy-dev:
+    filters:
+      branches:
+        only: develop
     jobs:
       - test-and-build:
           context: REACT_LAB
-          filters:
-            branches:
-              only: develop
 
       - deploy-dev:
           context: REACT_LAB
           requires:
             - test-and-build
-          filters:
-            branches:
-              only: develop
 
   build-deploy-stage:
+    filters:
+      branches:
+        only: master
     jobs:
       - test-and-build:
           context: REACT_LAB_STAGE
-          filters:
-            branches:
-              only: master
 
       - deploy-stage:
           context: REACT_LAB_STAGE
           requires:
             - test-and-build
-          filters:
-            branches:
-              only: master
