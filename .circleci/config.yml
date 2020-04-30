@@ -11,7 +11,7 @@ executors:
     docker:
       - image: circleci/python:3.7
 jobs:
-  test:
+  test-and-build:
     executor: node-executor 
     steps:
       - checkout
@@ -29,32 +29,11 @@ jobs:
       - run: npm run size
       - run: npm run coverage
 
-  build-dev:
-    executor: node-executor
-    steps:
       - run: npm build
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/build
-
-  build-stage:
-    executor: node-executor
-    steps:
-      - run: npm build
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/build
-
-  build-prod:
-    executor: node-executor
-    steps:
-      - run: npm build
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/build   
+            - project/build 
 
   deploy-dev:
     executor: python-executor
@@ -98,11 +77,8 @@ jobs:
 workflows:
   build-deploy-dev:
     jobs:
-      - test
-      - build-dev:
+      - test-and-build:
           context: REACT_LAB
-          requires:
-            - test
           filters:
             branches:
               only: develop
@@ -110,7 +86,23 @@ workflows:
       - deploy-dev:
           context: REACT_LAB
           requires:
-            - build-dev
+            - test-and-build
           filters:
             branches:
               only: develop
+
+  build-deploy-stage:
+    jobs:
+      - test-and-build:
+          context: REACT_LAB_STAGE
+          filters:
+            branches:
+              only: master
+
+      - deploy-stage:
+          context: REACT_LAB_STAGE
+          requires:
+            - test-and-build
+          filters:
+            branches:
+              only: master
