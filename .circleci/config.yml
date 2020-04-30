@@ -97,9 +97,6 @@ jobs:
 
 workflows:
   build-deploy-dev:
-    filters:
-      branches:
-        only: develop
     jobs:
       - test:
         filters:
@@ -122,9 +119,6 @@ workflows:
               only: develop
 
   build-deploy-stage:
-    filters:
-      branches:
-        only: master
     jobs:
       - test:
         filters:
