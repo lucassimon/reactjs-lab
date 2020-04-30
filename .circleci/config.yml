@@ -12,6 +12,24 @@ executors:
       - image: circleci/python:3.7
 
 jobs:
+  test:
+    executor: node-executor 
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run: npm run size
+      - run: npm run coverage
+
   test-and-build:
     executor: node-executor 
     steps:
@@ -76,6 +94,10 @@ jobs:
           overwrite: true # default is false
 
 workflows:
+  feature-branch:
+    jobs:
+      - test
+
   build-deploy-dev:
     jobs:
       - test-and-build:
@@ -107,3 +129,25 @@ workflows:
           filters:
             branches:
               only: master
+
+  build-deploy-prod:
+    jobs:
+      - test-and-build:
+          context: REACT_LAB_PROD
+          filters:
+            branches:
+              ignore: /.*/
+            # only act on version tags
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*$/
+
+      - deploy-stage:
+          context: REACT_LAB_PROD
+          requires:
+            - test-and-build
+          filters:
+            branches:
+              ignore: /.*/
+            # only act on version tags
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*$/
