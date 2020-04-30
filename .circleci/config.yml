@@ -96,7 +96,12 @@ jobs:
 workflows:
   feature-branch:
     jobs:
-      - test
+      - test:
+        filters:
+            branches:
+              ignore: 
+                - develop
+                - master
 
   build-deploy-dev:
     jobs:
