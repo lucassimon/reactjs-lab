@@ -11,7 +11,7 @@ executors:
     docker:
       - image: circleci/python:3.7
 jobs:
-  build:
+  test:
     executor: node-executor 
     steps:
       - checkout
@@ -28,18 +28,40 @@ jobs:
 
       - run: npm run size
       - run: npm run coverage
-      - run: npm build
 
+  build-dev:
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run: npm build
       - persist_to_workspace:
           root: ~/
           paths:
             - project/build
-          
-  deploy-dev:
-    executor: python-executor
+
+  build-stage:
     steps:
       - attach_workspace:
           at: ~/
+      - run: npm build
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/build
+
+  build-prod:
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run: npm build
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/build   
+
+  deploy-dev:
+    executor: python-executor
+    steps:
       - aws-s3/sync:
           from: ~/project/build
           to: 's3://react-lab-dev-purposes/'
@@ -78,8 +100,20 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build:
+      - build-dev:
           context: REACT_LAB
+          filters:
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*$/
+
+      - build-stage:
+          context: REACT_LAB_STAGE
+          filters:
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*$/
+
+      - build-prod:
+          context: REACT_LAB_PROD
           filters:
             tags:
               only: /^v[0-9]+(\.[0-9]+)*$/
@@ -87,25 +121,28 @@ workflows:
       - deploy-dev:
           context: REACT_LAB
           requires:
-            - build
+            - test
+            - build-dev
           filters:
             branches:
               only: develop
 
       - deploy-stage:
-          context: REACT_LAB
+          context: REACT_LAB_STAGE
           type: approval
           requires:
-            - build
+            - test
+            - build-stage
           filters:
             branches:
               only: master
 
       - deploy-prod:
-          context: REACT_LAB
+          context: REACT_LAB_PROD
           type: approval
           requires:
-            - build
+            - test
+            - build-prod
           filters:
             branches:
               ignore: /.*/
