@@ -99,20 +99,17 @@ workflows:
   build-deploy-dev:
     jobs:
       - test:
-        filters:
-            tags:
-              only: /^v[0-9]+(\.[0-9]+)*$/
-
       - build-dev:
           context: REACT_LAB
           requires:
             - test
           filters:
-            tags:
-              only: /^v[0-9]+(\.[0-9]+)*$/
+            branches:
+              only: develop
 
       - deploy-dev:
           context: REACT_LAB
+          requires:
             - build-dev
           filters:
             branches:
@@ -120,21 +117,18 @@ workflows:
 
   build-deploy-stage:
     jobs:
-      - test:
-        filters:
-            tags:
-              only: /^v[0-9]+(\.[0-9]+)*$/
-
+      - test
       - build-stage:
           context: REACT_LAB_STAGE
           requires:
             - test
           filters:
-            tags:
-              only: /^v[0-9]+(\.[0-9]+)*$/
+            branches:
+              only: master
 
       - deploy-stage:
           context: REACT_LAB_STAGE
+          requires:
             - build-stage
           filters:
             branches:
