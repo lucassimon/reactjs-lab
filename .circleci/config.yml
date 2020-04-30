@@ -31,8 +31,6 @@ jobs:
 
   build-dev:
     steps:
-      - attach_workspace:
-          at: ~/
       - run: npm build
       - persist_to_workspace:
           root: ~/
@@ -41,8 +39,6 @@ jobs:
 
   build-stage:
     steps:
-      - attach_workspace:
-          at: ~/
       - run: npm build
       - persist_to_workspace:
           root: ~/
@@ -51,8 +47,6 @@ jobs:
 
   build-prod:
     steps:
-      - attach_workspace:
-          at: ~/
       - run: npm build
       - persist_to_workspace:
           root: ~/
@@ -62,6 +56,8 @@ jobs:
   deploy-dev:
     executor: python-executor
     steps:
+      - attach_workspace:
+          at: ~/
       - aws-s3/sync:
           from: ~/project/build
           to: 's3://react-lab-dev-purposes/'
