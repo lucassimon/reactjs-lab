@@ -98,7 +98,7 @@ jobs:
 workflows:
   build-deploy-dev:
     jobs:
-      - test:
+      - test
       - build-dev:
           context: REACT_LAB
           requires:
@@ -114,24 +114,3 @@ workflows:
           filters:
             branches:
               only: develop
-
-  build-deploy-stage:
-    jobs:
-      - test
-      - build-stage:
-          context: REACT_LAB_STAGE
-          requires:
-            - test
-          filters:
-            branches:
-              only: master
-
-      - deploy-stage:
-          context: REACT_LAB_STAGE
-          requires:
-            - build-stage
-          filters:
-            branches:
-              only: master
-
-
