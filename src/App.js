@@ -18,6 +18,7 @@ function App() {
         >
           Learn React change develop
         </a>
+        <span>{process.env.REACT_APP_API_BASE_URL}</span>
       </header>
     </div>
   );
