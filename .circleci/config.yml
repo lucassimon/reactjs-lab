@@ -30,6 +30,7 @@ jobs:
       - run: npm run coverage
 
   build-dev:
+    executor: node-executor
     steps:
       - run: npm build
       - persist_to_workspace:
@@ -38,6 +39,7 @@ jobs:
             - project/build
 
   build-stage:
+    executor: node-executor
     steps:
       - run: npm build
       - persist_to_workspace:
@@ -46,6 +48,7 @@ jobs:
             - project/build
 
   build-prod:
+    executor: node-executor
     steps:
       - run: npm build
       - persist_to_workspace:
