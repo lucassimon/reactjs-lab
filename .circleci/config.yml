@@ -96,7 +96,6 @@ jobs:
           overwrite: true # default is false
 
 workflows:
-  version: 2
   build-deploy-dev:
     filters:
       branches:
